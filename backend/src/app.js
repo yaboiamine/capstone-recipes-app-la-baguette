@@ -1,7 +1,11 @@
 require("dotenv").config();
 const express = require("express");
+const pg = require("pg");
 const { Pool } = require("pg");
 const { Sequelize } = require("sequelize");
+
+const indexRouter = require("./routes/index.js");
+const usersRouter = require("./routes/users.js");
 
 const PORT = 3000;
 
@@ -13,19 +17,13 @@ const pool = new Pool({
   port: process.env.PG_PORT,
 });
 
-const db = new Sequelize(
-  process.env.DATABASE_URL || "postgres://localhost:5432/ecommerce-lab3",
-  { logging: false }
-);
-
 const app = express();
 app.use(express.json());
 
 const port = process.env.PORT || 3000;
 
-app.get("/", (req, res) => {
-  res.send({ title: "Hello World!" });
-});
+app.use("/", indexRouter);
+app.use("/users", usersRouter);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
