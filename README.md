@@ -32,6 +32,12 @@ npm install;
 npm run dev;
 ```
 
+#### Running database migrations
+
+This is done using sequelize-cli. See https://sequelize.org/docs/v6/other-topics/migrations/ for more information.
+To run the migrations use `npm run migrate`.
+To rollback (or "undo") use `npm run rollback`.
+
 ### Frontend
 
 #### Starting the server locally
