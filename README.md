@@ -32,6 +32,19 @@ npm install;
 npm run dev;
 ```
 
+#### Database Overview
+
+The database connection is established in `src/db/index.js`. Here, the connection is made based on the configurations defined in `src/db/config/config.json` and the current `NODE_ENV` environment variable.
+
+Models are defined in `src/db/models`. This folder is automatically parsed by `src/db/index.js` and every model defined gets added to the `db` variable that is exported by `src/db/index.js`. For example to access the `User` model you can do the following.
+
+```
+const db = require("path/to/db");
+const User = db["User"];
+
+User.findAll();
+```
+
 #### Running database migrations
 
 This is done using sequelize-cli. See https://sequelize.org/docs/v6/other-topics/migrations/ for more information.
