@@ -1,64 +1,155 @@
-# CHAT APP
+# RECIPE APP
 
-The goal is to create an application similar to Slack. However, it is important to remember to make this project YOURS!
+This capstone began as a fork of the **Chat App** starter you see in the repo history, but it’s been completely re-imagined for sharing, discovering, and talking about food.  
+Think of it as “Slack meets NYT Cooking” — a place where users can save recipes, post their own twists, and chat about substitutions or plating tips, all in one place.
 
-### Requirements
+---
 
-Looking at Slack will give you a good idea of the kind of functionality you can add but this project is open ended and you can build whatever kind of chat application you would like.
+### Core Features (MVP)
 
-If we were to build something like Slack, we'd probably want to consider the following.
+| Area          | What the user can do                                                                                                                                   |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Accounts**  | Sign-up / log-in with email + password (JWT in localStorage)                                                                                            |
+| **Recipes**   | • CRUD: create, read, update, delete<br>• Attach photos, tags, cook-time, serving size, ingredients & steps                                             |
+| **Collections** | Group recipes into user-defined “Cookbooks” (e.g. *Weeknight Dinners*)                                                                                |
+| **Social**    | • (Optional) Comment on a recipe thread<br>• “Heart” a recipe (adds to *Favorites*)                                                                               |
+| **Search & Filters** | Full-text search on title/ingredients, tag filters (vegan, gluten-free, < 30 min, etc.)                                                          |
+| **Realtime Chat *(stretch)*** | (Optional) In-recipe chat powered by socket.io so cooks can riff in real time                                                                      |
 
-- Users should be able to log in
-- Users should be able to create channels
-- Users should be able to write messages in a channel
-- Users should be able to send messages directly to other users
+Feel free to add or swap any of these. The project is intentionally open-ended – build the food app **you** would use every day.
 
-These are just examples of some core features but you should decide the specifics of the application you want to build.
+---
 
-## Navigating the codebase
+## Running the project locally
 
-This codebase consists of a frontend and backend application that can each be run seperately. See `package.json` in the respective folders to see how to start the servers.
-Hint: run `npm run dev`.
+This repo is a **monorepo** with separate **/backend** and **/frontend** folders. Each can be run on its own dev server.
+
+### Prerequisites
+
+* **Node ≥ 18**  
+* **PostgreSQL** (or Docker)  
+* `pnpm` **or** `npm`
 
 ### Backend
 
-#### Starting the server locally
+```bash
+cd backend
+npm install
+npm run dev        # runs nodemon on :5000
+````
 
-In a new terminal window
+`src/index.js` spins up an Express server and mounts REST routes at `/api/*`.
+
+#### Database
+
+* **Connection**: `src/db/index.js` (uses `sequelize`)
+* **Config**: `src/db/config/config.json`
+* **Models**: every file in `src/db/models` is auto-loaded and attached to the exported `db` object.
+
+```js
+const { Recipe, User } = require('../db');   // example
+```
+
+##### Migrations & seed data
 
 ```bash
-cd backend;
-npm install;
-npm run dev;
+npm run migrate        # all migrations
+npm run rollback       # undo last batch
+npm run seed           # optional: loads sample users & recipes
 ```
 
-#### Database Overview
-
-The database connection is established in `src/db/index.js`. Here, the connection is made based on the configurations defined in `src/db/config/config.json` and the current `NODE_ENV` environment variable.
-
-Models are defined in `src/db/models`. This folder is automatically parsed by `src/db/index.js` and every model defined gets added to the `db` variable that is exported by `src/db/index.js`. For example to access the `User` model you can do the following.
-
-```
-const db = require("path/to/db");
-const User = db["User"];
-
-User.findAll();
-```
-
-#### Running database migrations
-
-This is done using sequelize-cli. See https://sequelize.org/docs/v6/other-topics/migrations/ for more information.
-To run the migrations use `npm run migrate`.
-To rollback (or "undo") use `npm run rollback`.
-
-### Frontend
-
-#### Starting the server locally
-
-In a new terminal window
+### Frontend (React + Vite)
 
 ```bash
-cd frontend;
-npm install;
-npm run dev;
+cd frontend
+npm install
+npm run dev        # hot-reloads on :3000
 ```
+
+* **Global state** → Redux Toolkit (recipes, auth, UI flags)
+* **Routing** → React Router 6
+* **Requests** → Axios hooks in `/src/api/`
+* **Styling** → Tailwind CSS (utility-first)
+* **Realtime chat** (stretch) → socket.io-client
+
+---
+
+## Useful NPM scripts (root)
+
+| Script | What it does                                                        |
+| ------ | ------------------------------------------------------------------- |
+| `dev`  | Runs **both** servers concurrently (`frontend:dev` & `backend:dev`) |
+| `lint` | ESLint + Prettier check                                             |
+| `test` | Jest + React Testing Library for unit/integration tests             |
+| `seed` | Calls backend seed script                                           |
+
+---
+
+## Environment variables
+
+Create a **`.env`** file in `/backend`:
+
+```
+DATABASE_URL=postgres://user:pw@localhost:5432/recipe_app_dev
+JWT_SECRET=super-secret-string
+```
+
+…and another in `/frontend` (Vite prefix required):
+
+```
+VITE_API_URL=http://localhost:5000/api
+```
+
+---
+
+## Folder structure (high-level)
+
+```
+.
+├── backend
+│   ├── src
+│   │   ├── db
+│   │   │   ├── models
+│   │   │   └── migrations
+│   │   ├── routes
+│   │   ├── controllers
+│   │   └── index.js
+├── frontend
+│   ├── src
+│   │   ├── components
+│   │   ├── pages
+│   │   ├── api
+│   │   ├── store
+│   │   └── main.jsx
+└── README.md
+```
+
+---
+
+## Deployment (suggested)
+
+* **Backend** – Railway, Render, or Fly.io (free Postgres addon).
+* **Frontend** – Netlify or Vercel (`npm run build` creates the `/dist` folder).
+* Set env-vars in both dashboards, point frontend to the hosted API URL.
+
+---
+
+### Contributing & Branch strategy
+
+1. `main` is always deployable.
+2. New work → feature branch (`feat/search-bar`, `fix/login-redirect`, …).
+3. Open a PR, run tests + linter, request review.
+4. Squash-merge into `main`, CI redeploys automatically.
+
+---
+
+### Inspiration / APIs
+
+* **Spoonacular API** – import nutrition data.
+* **Cloudinary** – store user-uploaded images.
+* **Redis** – rate-limit or cache popular recipe queries.
+
+---
+
+**Bon appétit — and happy coding!**
+
