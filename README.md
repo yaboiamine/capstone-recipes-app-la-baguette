@@ -12,7 +12,7 @@ Think of it as “Slack meets NYT Cooking” — a place where users can save re
 | **Accounts**  | Sign-up / log-in with email + password (JWT in localStorage)                                                                                            |
 | **Recipes**   | • CRUD: create, read, update, delete<br>• Attach photos, tags, cook-time, serving size, ingredients & steps                                             |
 | **Collections** | Group recipes into user-defined “Cookbooks” (e.g. *Weeknight Dinners*)                                                                                |
-| **Social**    | • (Optional) Comment on a recipe thread<br>• “Heart” a recipe (adds to *Favorites*)                                                                               |
+| **Social**    | • (Optional) Comment on a recipe thread<br>• (Optional) “Heart” a recipe (adds to *Favorites*)                                                                               |
 | **Search & Filters** | Full-text search on title/ingredients, tag filters (vegan, gluten-free, < 30 min, etc.)                                                          |
 | **Realtime Chat *(stretch)*** | (Optional) In-recipe chat powered by socket.io so cooks can riff in real time                                                                      |
 
