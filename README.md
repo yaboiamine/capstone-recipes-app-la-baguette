@@ -28,34 +28,38 @@ This repo is a **monorepo** with separate **/backend** and **/frontend** folders
 
 * **Node ≥ 18**  
 * **PostgreSQL** (or Docker)  
-* `pnpm` **or** `npm`
+* `npm`
 
-### Backend
 
-```bash
-cd backend
-npm install
-npm run dev        # runs nodemon on :5000
-````
+#### Database Overview
 
-`src/index.js` spins up an Express server and mounts REST routes at `/api/*`.
+The database connection is established in `src/db/index.js`. Here, the connection is made based on the configurations defined in `src/db/config/config.json` and the current `NODE_ENV` environment variable.
 
-#### Database
+Models are defined in `src/db/models`. This folder is automatically parsed by `src/db/index.js` and every model defined gets added to the `db` variable that is exported by `src/db/index.js`. For example to access the `User` model you can do the following.
 
-* **Connection**: `src/db/index.js` (uses `sequelize`)
-* **Config**: `src/db/config/config.json`
-* **Models**: every file in `src/db/models` is auto-loaded and attached to the exported `db` object.
+```
+const db = require("path/to/db");
+const User = db["User"];
 
-```js
-const { Recipe, User } = require('../db');   // example
+User.findAll();
 ```
 
-##### Migrations & seed data
+#### Running database migrations
+
+This is done using sequelize-cli. See https://sequelize.org/docs/v6/other-topics/migrations/ for more information.
+To run the migrations use `npm run migrate`.
+To rollback (or "undo") use `npm run rollback`.
+
+### Frontend
+
+#### Starting the server locally
+
+In a new terminal window
 
 ```bash
-npm run migrate        # all migrations
-npm run rollback       # undo last batch
-npm run seed           # optional: loads sample users & recipes
+cd frontend;
+npm install;
+npm run dev;
 ```
 
 ### Frontend (React + Vite)
