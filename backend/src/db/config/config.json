@@ -1,22 +1,22 @@
 {
   "development": {
-    "username": "abubakarrmarah",
-    "password": "0966c8e0",
-    "database": "recipesdb",
+    "username": "postgres",
+    "password": "admin",
+    "database": "recipedb",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "test": {
-    "username": "abubakarrmarah",
-    "password": "0966c8e0",
-    "database": "recipesdb_test",
+    "username": "postgres",
+    "password": "admin",
+    "database": "recipedb_test",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "production": {
-    "username": "abubakarrmarah",
-    "password": "0966c8e0",
-    "database": "recipesdb_prod",
+    "username": "postgres",
+    "password": "admin",
+    "database": "recipedb_prod",
     "host": "127.0.0.1",
     "dialect": "postgres"
   }
