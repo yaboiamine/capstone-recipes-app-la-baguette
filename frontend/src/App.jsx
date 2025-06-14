@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import "./App.css"; // Import the CSS file
 
 function App() {
   // Auth state
@@ -22,327 +23,6 @@ function App() {
   const [description, setDescription] = useState("");
   const [showAddRecipe, setShowAddRecipe] = useState(false);
   const [showAddUser, setShowAddUser] = useState(false);
-
-  // CSS styles as objects
-  const styles = {
-    container: {
-      minHeight: "100vh",
-      background: "linear-gradient(135deg, #fff7ed 0%, #fef3c7 100%)",
-      fontFamily: "system-ui, -apple-system, sans-serif",
-    },
-    authContainer: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      minHeight: "100vh",
-      padding: "1rem",
-    },
-    authCard: {
-      background: "white",
-      borderRadius: "1rem",
-      boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-      padding: "2rem",
-      width: "100%",
-      maxWidth: "28rem",
-    },
-    logo: {
-      textAlign: "center",
-      marginBottom: "2rem",
-    },
-    logoIcon: {
-      display: "inline-flex",
-      alignItems: "center",
-      justifyContent: "center",
-      width: "4rem",
-      height: "4rem",
-      backgroundColor: "#fed7aa",
-      borderRadius: "50%",
-      marginBottom: "1rem",
-      fontSize: "2rem",
-    },
-    title: {
-      fontSize: "1.5rem",
-      fontWeight: "bold",
-      color: "#1f2937",
-      marginBottom: "0.5rem",
-      margin: 0,
-    },
-    subtitle: {
-      color: "#6b7280",
-      margin: 0,
-    },
-    formGroup: {
-      marginBottom: "1rem",
-    },
-    gridTwo: {
-      display: "grid",
-      gridTemplateColumns: "1fr 1fr",
-      gap: "1rem",
-      marginBottom: "1rem",
-    },
-    input: {
-      width: "100%",
-      padding: "0.75rem 1rem",
-      border: "1px solid #d1d5db",
-      borderRadius: "0.5rem",
-      fontSize: "1rem",
-      boxSizing: "border-box",
-      outline: "none",
-      transition: "all 0.2s",
-    },
-    inputFocus: {
-      borderColor: "#ea580c",
-      boxShadow: "0 0 0 3px rgba(234, 88, 12, 0.1)",
-    },
-    button: {
-      width: "100%",
-      padding: "0.75rem",
-      backgroundColor: "#ea580c",
-      color: "white",
-      border: "none",
-      borderRadius: "0.5rem",
-      fontSize: "1rem",
-      fontWeight: "500",
-      cursor: "pointer",
-      transition: "background-color 0.2s",
-    },
-    buttonHover: {
-      backgroundColor: "#c2410c",
-    },
-    linkButton: {
-      background: "none",
-      border: "none",
-      color: "#ea580c",
-      cursor: "pointer",
-      fontSize: "1rem",
-      fontWeight: "500",
-      marginTop: "1.5rem",
-    },
-    error: {
-      marginTop: "1rem",
-      padding: "0.75rem",
-      backgroundColor: "#fee2e2",
-      border: "1px solid #fecaca",
-      color: "#dc2626",
-      borderRadius: "0.5rem",
-      fontSize: "0.875rem",
-    },
-    mainContainer: {
-      minHeight: "100vh",
-      backgroundColor: "#f9fafb",
-    },
-    header: {
-      backgroundColor: "white",
-      borderBottom: "1px solid #e5e7eb",
-      boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)",
-    },
-    headerContent: {
-      maxWidth: "72rem",
-      margin: "0 auto",
-      padding: "1rem",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-    },
-    headerLeft: {
-      display: "flex",
-      alignItems: "center",
-      gap: "0.75rem",
-    },
-    headerIcon: {
-      width: "2.5rem",
-      height: "2.5rem",
-      backgroundColor: "#ea580c",
-      borderRadius: "50%",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      color: "white",
-      fontSize: "1.25rem",
-    },
-    headerRight: {
-      display: "flex",
-      alignItems: "center",
-      gap: "1rem",
-    },
-    content: {
-      maxWidth: "72rem",
-      margin: "0 auto",
-      padding: "2rem 1rem",
-      display: "grid",
-      gridTemplateColumns: "2fr 1fr",
-      gap: "2rem",
-    },
-    sectionHeader: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      marginBottom: "1.5rem",
-    },
-    sectionTitle: {
-      fontSize: "1.5rem",
-      fontWeight: "bold",
-      color: "#1f2937",
-      margin: 0,
-    },
-    addButton: {
-      display: "flex",
-      alignItems: "center",
-      gap: "0.5rem",
-      backgroundColor: "#ea580c",
-      color: "white",
-      border: "none",
-      padding: "0.5rem 1rem",
-      borderRadius: "0.5rem",
-      cursor: "pointer",
-      fontSize: "0.875rem",
-      fontWeight: "500",
-    },
-    card: {
-      backgroundColor: "white",
-      borderRadius: "0.75rem",
-      boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-      border: "1px solid #e5e7eb",
-      overflow: "hidden",
-      marginBottom: "1.5rem",
-      transition: "box-shadow 0.2s",
-    },
-    cardHover: {
-      boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
-    },
-    cardContent: {
-      padding: "1.5rem",
-    },
-    recipeHeader: {
-      padding: "1rem",
-      borderBottom: "1px solid #e5e7eb",
-      display: "flex",
-      alignItems: "center",
-      gap: "0.75rem",
-    },
-    avatar: {
-      width: "2.5rem",
-      height: "2.5rem",
-      backgroundColor: "#ea580c",
-      borderRadius: "50%",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      color: "white",
-      fontSize: "0.875rem",
-      fontWeight: "500",
-    },
-    recipeImage: {
-      width: "100%",
-      height: "16rem",
-      objectFit: "cover",
-      position: "relative",
-    },
-    imageContainer: {
-      position: "relative",
-    },
-    category: {
-      position: "absolute",
-      top: "1rem",
-      right: "1rem",
-      backgroundColor: "rgba(0, 0, 0, 0.5)",
-      color: "white",
-      padding: "0.25rem 0.75rem",
-      borderRadius: "9999px",
-      fontSize: "0.875rem",
-    },
-    recipeActions: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      marginTop: "1rem",
-    },
-    actionButton: {
-      display: "flex",
-      alignItems: "center",
-      gap: "0.5rem",
-      background: "none",
-      border: "none",
-      color: "#6b7280",
-      cursor: "pointer",
-      fontSize: "0.875rem",
-    },
-    textarea: {
-      width: "100%",
-      padding: "0.75rem 1rem",
-      border: "1px solid #d1d5db",
-      borderRadius: "0.5rem",
-      fontSize: "1rem",
-      boxSizing: "border-box",
-      outline: "none",
-      resize: "none",
-      fontFamily: "inherit",
-    },
-    buttonGroup: {
-      display: "flex",
-      gap: "0.75rem",
-    },
-    secondaryButton: {
-      padding: "0.5rem 1.5rem",
-      backgroundColor: "#e5e7eb",
-      color: "#374151",
-      border: "none",
-      borderRadius: "0.5rem",
-      cursor: "pointer",
-      fontSize: "0.875rem",
-    },
-    sidebar: {
-      display: "flex",
-      flexDirection: "column",
-      gap: "1.5rem",
-    },
-    userList: {
-      display: "flex",
-      flexDirection: "column",
-      gap: "0.75rem",
-    },
-    userItem: {
-      display: "flex",
-      alignItems: "center",
-      gap: "0.75rem",
-    },
-    userInfo: {
-      flex: 1,
-    },
-    userName: {
-      fontWeight: "500",
-      color: "#1f2937",
-      fontSize: "0.875rem",
-      margin: 0,
-    },
-    userEmail: {
-      color: "#6b7280",
-      fontSize: "0.75rem",
-      margin: 0,
-    },
-    statsGrid: {
-      display: "flex",
-      flexDirection: "column",
-      gap: "0.75rem",
-    },
-    statItem: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-    },
-    statValue: {
-      fontWeight: "600",
-      color: "#ea580c",
-    },
-    footer: {
-      backgroundColor: "white",
-      borderTop: "1px solid #e5e7eb",
-      marginTop: "3rem",
-      textAlign: "center",
-      padding: "1.5rem",
-      color: "#6b7280",
-    },
-  };
 
   // Mock data for demonstration
   useEffect(() => {
@@ -391,7 +71,6 @@ function App() {
   const handleAuth = async () => {
     setAuthError("");
 
-    // Mock authentication - in real app, this would be an API call
     if (authMode === "login") {
       if (authEmail && authPassword) {
         setUser({
@@ -465,34 +144,28 @@ function App() {
 
   if (!user) {
     return (
-      <div style={styles.container}>
-        <div style={styles.authContainer}>
-          <div style={styles.authCard}>
-            <div style={styles.logo}>
-              <div style={styles.logoIcon}>🥖</div>
-              <h1 style={styles.title}>La Baguette</h1>
-              <p style={styles.subtitle}>Recipe Hub</p>
+      <div className="container">
+        <div className="auth-container">
+          <div className="auth-card">
+            <div className="logo">
+              <div className="logo-icon">🥖</div>
+              <h1 className="title">La Baguette</h1>
+              <p className="subtitle">Recipe Hub</p>
             </div>
 
             <div>
-              <h2
-                style={{
-                  ...styles.title,
-                  textAlign: "center",
-                  marginBottom: "1.5rem",
-                }}
-              >
+              <h2 className="title text-center mb-4">
                 {authMode === "signup" ? "Create Account" : "Welcome Back"}
               </h2>
 
               {authMode === "signup" && (
-                <div style={styles.gridTwo}>
+                <div className="grid-two">
                   <input
                     type="text"
                     placeholder="First Name"
                     value={authFirstName}
                     onChange={(e) => setAuthFirstName(e.target.value)}
-                    style={styles.input}
+                    className="input"
                     required
                   />
                   <input
@@ -500,56 +173,45 @@ function App() {
                     placeholder="Last Name"
                     value={authLastName}
                     onChange={(e) => setAuthLastName(e.target.value)}
-                    style={styles.input}
+                    className="input"
                     required
                   />
                 </div>
               )}
 
-              <div style={styles.formGroup}>
+              <div className="form-group">
                 <input
                   type="email"
                   placeholder="Email Address"
                   value={authEmail}
                   onChange={(e) => setAuthEmail(e.target.value)}
-                  style={styles.input}
+                  className="input"
                   required
                 />
               </div>
 
-              <div style={styles.formGroup}>
+              <div className="form-group">
                 <input
                   type="password"
                   placeholder="Password"
                   value={authPassword}
                   onChange={(e) => setAuthPassword(e.target.value)}
-                  style={styles.input}
+                  className="input"
                   required
                 />
               </div>
 
-              <button
-                onClick={handleAuth}
-                style={styles.button}
-                onMouseOver={(e) =>
-                  (e.target.style.backgroundColor =
-                    styles.buttonHover.backgroundColor)
-                }
-                onMouseOut={(e) =>
-                  (e.target.style.backgroundColor =
-                    styles.button.backgroundColor)
-                }
-              >
+              <button onClick={handleAuth} className="button">
                 {authMode === "signup" ? "Create Account" : "Sign In"}
               </button>
             </div>
 
-            <div style={{ textAlign: "center" }}>
+            <div className="text-center">
               <button
                 onClick={() =>
                   setAuthMode(authMode === "signup" ? "login" : "signup")
                 }
-                style={styles.linkButton}
+                className="link-button"
               >
                 {authMode === "signup"
                   ? "Already have an account? Sign In"
@@ -557,7 +219,7 @@ function App() {
               </button>
             </div>
 
-            {authError && <div style={styles.error}>{authError}</div>}
+            {authError && <div className="error">{authError}</div>}
           </div>
         </div>
       </div>
@@ -565,27 +227,22 @@ function App() {
   }
 
   return (
-    <div style={styles.mainContainer}>
+    <div className="main-container">
       {/* Header */}
-      <header style={styles.header}>
-        <div style={styles.headerContent}>
-          <div style={styles.headerLeft}>
-            <div style={styles.headerIcon}>🥖</div>
+      <header className="header">
+        <div className="header-content">
+          <div className="header-left">
+            <div className="header-icon">🥖</div>
             <div>
-              <h1 style={{ ...styles.title, fontSize: "1.25rem" }}>
+              <h1 className="title" style={{ fontSize: "1.25rem" }}>
                 La Baguette
               </h1>
-              <p style={{ ...styles.subtitle, fontSize: "0.875rem" }}>
-                Recipe Hub
-              </p>
+              <p className="subtitle text-sm">Recipe Hub</p>
             </div>
           </div>
-          <div style={styles.headerRight}>
-            <span style={{ color: "#374151" }}>Welcome, {user.firstName}!</span>
-            <button
-              onClick={handleLogout}
-              style={{ ...styles.actionButton, color: "#6b7280" }}
-            >
+          <div className="header-right">
+            <span className="text-gray">Welcome, {user.firstName}!</span>
+            <button onClick={handleLogout} className="action-button">
               <span>🚪</span>
               <span>Logout</span>
             </button>
@@ -593,14 +250,14 @@ function App() {
         </div>
       </header>
 
-      <div style={styles.content}>
+      <div className="content">
         {/* Main Content - Recipes */}
         <div>
-          <div style={styles.sectionHeader}>
-            <h2 style={styles.sectionTitle}>Recipe Feed</h2>
+          <div className="section-header">
+            <h2 className="section-title">Recipe Feed</h2>
             <button
               onClick={() => setShowAddRecipe(true)}
-              style={styles.addButton}
+              className="add-button"
             >
               <span>+</span>
               <span>Add Recipe</span>
@@ -609,30 +266,18 @@ function App() {
 
           {/* Add Recipe Modal */}
           {showAddRecipe && (
-            <div style={styles.card}>
-              <div style={styles.cardContent}>
-                <h3
-                  style={{
-                    ...styles.title,
-                    fontSize: "1.125rem",
-                    marginBottom: "1rem",
-                  }}
-                >
+            <div className="card">
+              <div className="card-content">
+                <h3 className="title mb-4" style={{ fontSize: "1.125rem" }}>
                   Share a New Recipe
                 </h3>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "1rem",
-                  }}
-                >
+                <div className="flex-column gap-lg">
                   <input
                     type="text"
                     placeholder="Recipe title..."
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    style={styles.input}
+                    className="input"
                     required
                   />
                   <textarea
@@ -640,23 +285,20 @@ function App() {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     rows={4}
-                    style={styles.textarea}
+                    className="textarea"
                     required
                   />
-                  <div style={styles.buttonGroup}>
+                  <div className="button-group">
                     <button
                       onClick={handleRecipeSubmit}
-                      style={{
-                        ...styles.button,
-                        width: "auto",
-                        padding: "0.5rem 1.5rem",
-                      }}
+                      className="button"
+                      style={{ width: "auto", padding: "0.5rem 1.5rem" }}
                     >
                       Share Recipe
                     </button>
                     <button
                       onClick={() => setShowAddRecipe(false)}
-                      style={styles.secondaryButton}
+                      className="secondary-button"
                     >
                       Cancel
                     </button>
@@ -669,10 +311,10 @@ function App() {
           {/* Recipe Cards */}
           <div>
             {recipes.map((recipe) => (
-              <div key={recipe.id} style={styles.card}>
+              <div key={recipe.id} className="card">
                 {/* Card Header */}
-                <div style={styles.recipeHeader}>
-                  <div style={styles.avatar}>
+                <div className="recipe-header">
+                  <div className="avatar">
                     {recipe.author
                       .split(" ")
                       .map((n) => n[0])
@@ -680,23 +322,12 @@ function App() {
                   </div>
                   <div>
                     <h3
-                      style={{
-                        ...styles.title,
-                        fontSize: "1rem",
-                        marginBottom: "0.25rem",
-                      }}
+                      className="title"
+                      style={{ fontSize: "1rem", marginBottom: "0.25rem" }}
                     >
                       {recipe.title}
                     </h3>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.5rem",
-                        fontSize: "0.875rem",
-                        color: "#6b7280",
-                      }}
-                    >
+                    <div className="flex gap-sm text-sm text-gray">
                       <span>{recipe.author}</span>
                       <span>•</span>
                       <span>{recipe.date}</span>
@@ -705,17 +336,19 @@ function App() {
                 </div>
 
                 {/* Recipe Image */}
-                <div style={styles.imageContainer}>
-                  <img
-                    src={recipe.image}
-                    alt={recipe.title}
-                    style={styles.recipeImage}
-                  />
-                  <div style={styles.category}>{recipe.category}</div>
-                </div>
+                {recipe.image && (
+                  <div className="image-container">
+                    <img
+                      src={recipe.image}
+                      alt={recipe.title}
+                      className="recipe-image"
+                    />
+                    <div className="category">{recipe.category}</div>
+                  </div>
+                )}
 
                 {/* Recipe Content */}
-                <div style={styles.cardContent}>
+                <div className="card-content">
                   <p
                     style={{
                       color: "#374151",
@@ -727,25 +360,17 @@ function App() {
                   </p>
 
                   {/* Actions */}
-                  <div style={styles.recipeActions}>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "1rem",
-                      }}
-                    >
-                      <button
-                        style={{ ...styles.actionButton, color: "#ef4444" }}
-                      >
+                  <div className="recipe-actions">
+                    <div className="flex gap-lg">
+                      <button className="action-button text-red">
                         <span>❤️</span>
                         <span>{recipe.likes}</span>
                       </button>
-                      <button style={styles.actionButton}>
+                      <button className="action-button">
                         <span>📅</span>
                       </button>
                     </div>
-                    <span style={{ fontSize: "0.875rem", color: "#9ca3af" }}>
+                    <span className="text-sm" style={{ color: "#9ca3af" }}>
                       {recipe.likes} people liked this recipe
                     </span>
                   </div>
@@ -756,21 +381,18 @@ function App() {
         </div>
 
         {/* Sidebar */}
-        <div style={styles.sidebar}>
+        <div className="sidebar">
           {/* Community Members */}
-          <div style={styles.card}>
-            <div style={styles.cardContent}>
-              <div style={{ ...styles.sectionHeader, marginBottom: "1rem" }}>
-                <h3 style={{ ...styles.title, fontSize: "1.125rem" }}>
+          <div className="card">
+            <div className="card-content">
+              <div className="section-header" style={{ marginBottom: "1rem" }}>
+                <h3 className="title" style={{ fontSize: "1.125rem" }}>
                   Community
                 </h3>
                 <button
                   onClick={() => setShowAddUser(true)}
-                  style={{
-                    ...styles.actionButton,
-                    color: "#ea580c",
-                    fontSize: "1.25rem",
-                  }}
+                  className="action-button text-orange"
+                  style={{ fontSize: "1.25rem" }}
                 >
                   +
                 </button>
@@ -778,27 +400,14 @@ function App() {
 
               {/* Add User Form */}
               {showAddUser && (
-                <div
-                  style={{
-                    marginBottom: "1rem",
-                    padding: "1rem",
-                    backgroundColor: "#f9fafb",
-                    borderRadius: "0.5rem",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "0.75rem",
-                    }}
-                  >
+                <div className="bg-gray-50 rounded p-4 mb-4">
+                  <div className="flex-column gap-md">
                     <input
                       type="text"
                       placeholder="First Name"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
-                      style={{ ...styles.input, fontSize: "0.875rem" }}
+                      className="input text-sm"
                       required
                     />
                     <input
@@ -806,7 +415,7 @@ function App() {
                       placeholder="Last Name"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
-                      style={{ ...styles.input, fontSize: "0.875rem" }}
+                      className="input text-sm"
                       required
                     />
                     <input
@@ -814,27 +423,21 @@ function App() {
                       placeholder="Email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      style={{ ...styles.input, fontSize: "0.875rem" }}
+                      className="input text-sm"
                       required
                     />
-                    <div style={{ display: "flex", gap: "0.5rem" }}>
+                    <div className="flex gap-sm">
                       <button
                         onClick={handleUserSubmit}
-                        style={{
-                          ...styles.button,
-                          width: "auto",
-                          padding: "0.25rem 0.75rem",
-                          fontSize: "0.875rem",
-                        }}
+                        className="button text-sm"
+                        style={{ width: "auto", padding: "0.25rem 0.75rem" }}
                       >
                         Add
                       </button>
                       <button
                         onClick={() => setShowAddUser(false)}
-                        style={{
-                          ...styles.secondaryButton,
-                          padding: "0.25rem 0.75rem",
-                        }}
+                        className="secondary-button"
+                        style={{ padding: "0.25rem 0.75rem" }}
                       >
                         Cancel
                       </button>
@@ -843,23 +446,17 @@ function App() {
                 </div>
               )}
 
-              <div style={styles.userList}>
+              <div className="user-list">
                 {users.map((user) => (
-                  <div key={user.id} style={styles.userItem}>
-                    <div
-                      style={{
-                        ...styles.avatar,
-                        background:
-                          "linear-gradient(135deg, #f97316 0%, #ea580c 100%)",
-                      }}
-                    >
+                  <div key={user.id} className="user-item">
+                    <div className="avatar gradient-avatar">
                       {user.firstName[0]}
                     </div>
-                    <div style={styles.userInfo}>
-                      <p style={styles.userName}>
+                    <div className="user-info">
+                      <p className="user-name">
                         {user.firstName} {user.lastName}
                       </p>
-                      <p style={styles.userEmail}>{user.email}</p>
+                      <p className="user-email">{user.email}</p>
                     </div>
                   </div>
                 ))}
@@ -868,29 +465,23 @@ function App() {
           </div>
 
           {/* Stats */}
-          <div style={styles.card}>
-            <div style={styles.cardContent}>
-              <h3
-                style={{
-                  ...styles.title,
-                  fontSize: "1.125rem",
-                  marginBottom: "1rem",
-                }}
-              >
+          <div className="card">
+            <div className="card-content">
+              <h3 className="title mb-4" style={{ fontSize: "1.125rem" }}>
                 Community Stats
               </h3>
-              <div style={styles.statsGrid}>
-                <div style={styles.statItem}>
-                  <span style={{ color: "#6b7280" }}>Total Recipes</span>
-                  <span style={styles.statValue}>{recipes.length}</span>
+              <div className="stats-grid">
+                <div className="stat-item">
+                  <span className="text-gray">Total Recipes</span>
+                  <span className="stat-value">{recipes.length}</span>
                 </div>
-                <div style={styles.statItem}>
-                  <span style={{ color: "#6b7280" }}>Active Members</span>
-                  <span style={styles.statValue}>{users.length}</span>
+                <div className="stat-item">
+                  <span className="text-gray">Active Members</span>
+                  <span className="stat-value">{users.length}</span>
                 </div>
-                <div style={styles.statItem}>
-                  <span style={{ color: "#6b7280" }}>Total Likes</span>
-                  <span style={styles.statValue}>
+                <div className="stat-item">
+                  <span className="text-gray">Total Likes</span>
+                  <span className="stat-value">
                     {recipes.reduce((sum, recipe) => sum + recipe.likes, 0)}
                   </span>
                 </div>
@@ -901,7 +492,7 @@ function App() {
       </div>
 
       {/* Footer */}
-      <footer style={styles.footer}>
+      <footer className="footer">
         <p>© {new Date().getFullYear()} La Baguette Recipe Hub. Bon appétit!</p>
       </footer>
     </div>
