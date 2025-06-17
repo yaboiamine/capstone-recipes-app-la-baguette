@@ -71,16 +71,40 @@ function App() {
   const handleAuth = async () => {
     setAuthError("");
 
-    if (authMode === "login") {
+
+    const url = "http://localhost:3000/users"; //just in case users/
+    
+    //connecting frontend to backend 
+    if (authMode === "signup") {
       if (authEmail && authPassword) {
-        setUser({
+        
+          const response = await fetch(url, {
+            method:"POST"
+              // create json by pulling values from the frontend
+            
+
+
+          });
+          if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const json = await response.json();
+    console.log(json);
+
+
+    setUser(json);
+
+        /*setUser({
           id: 1,
           firstName: authFirstName || "Chef",
           lastName: authLastName || "User",
           email: authEmail,
         });
+        
         setAuthEmail("");
         setAuthPassword("");
+        */
       } else {
         setAuthError("Please enter email and password");
       }
@@ -166,6 +190,7 @@ function App() {
                     value={authFirstName}
                     onChange={(e) => setAuthFirstName(e.target.value)}
                     className="input"
+                    id = "newUserFirstName"
                     required
                   />
                   <input
@@ -174,6 +199,7 @@ function App() {
                     value={authLastName}
                     onChange={(e) => setAuthLastName(e.target.value)}
                     className="input"
+                    id = "newUserLastName"
                     required
                   />
                 </div>
@@ -186,6 +212,7 @@ function App() {
                   value={authEmail}
                   onChange={(e) => setAuthEmail(e.target.value)}
                   className="input"
+                 
                   required
                 />
               </div>
@@ -197,6 +224,7 @@ function App() {
                   value={authPassword}
                   onChange={(e) => setAuthPassword(e.target.value)}
                   className="input"
+                  id = "newUserPassword"
                   required
                 />
               </div>
