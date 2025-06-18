@@ -69,59 +69,84 @@ function App() {
 
   // Auth handlers
   const handleAuth = async () => {
-    setAuthError("");
+    setAuthError(""); // Clear previous errors
 
-
-    const url = "http://localhost:3000/users"; //just in case users/
-    
-    //connecting frontend to backend 
+    // Connecting frontend to backend for user signup
     if (authMode === "signup") {
-      if (authEmail && authPassword) {
-        
-          const response = await fetch(url, {
-            method:"POST"
-              // create json by pulling values from the frontend
-            
-
-
-          });
-          if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
-    }
-
-    const json = await response.json();
-    console.log(json);
-
-
-    setUser(json);
-
-        /*setUser({
-          id: 1,
-          firstName: authFirstName || "Chef",
-          lastName: authLastName || "User",
-          email: authEmail,
-        });
-        
-        setAuthEmail("");
-        setAuthPassword("");
-        */
-      } else {
-        setAuthError("Please enter email and password");
-      }
-    } else {
       if (authEmail && authPassword && authFirstName && authLastName) {
-        setUser({
-          id: 1,
-          firstName: authFirstName,
-          lastName: authLastName,
-          email: authEmail,
-        });
-        setAuthEmail("");
-        setAuthPassword("");
-        setAuthFirstName("");
-        setAuthLastName("");
+        try {
+          const response = await fetch("http://localhost:3000/auth/signup", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              firstName: authFirstName,
+              lastName: authLastName,
+              email: authEmail,
+              password: authPassword,
+            }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `Failed to create account: ${response.statusText}`);
+          }
+
+          const result = await response.json();
+          console.log("Signup successful:", result);
+
+          // Assuming your backend returns a 'user' object and 'token' upon successful signup
+          setUser(result.user); // Set the user state with data from the backend
+          
+          // Clear form fields after successful signup
+          setAuthEmail("");
+          setAuthPassword("");
+          setAuthFirstName("");
+          setAuthLastName("");
+
+        } catch (error) {
+          console.error("Signup error:", error);
+          setAuthError(error.message);
+        }
       } else {
-        setAuthError("Please fill all fields");
+        setAuthError("Please fill all fields for signup.");
+      }
+    } else { // Login mode
+      if (authEmail && authPassword) {
+        try {
+          const response = await fetch("http://localhost:3000/auth/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: authEmail,
+              password: authPassword,
+            }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `Login failed: ${response.statusText}`);
+          }
+
+          const result = await response.json();
+          console.log("Login successful:", result);
+
+          // Assuming your backend returns a 'user' object and 'token' upon successful login
+          setUser(result.user); // Set the user state with data from the backend
+
+          // Clear form fields after successful login
+          setAuthEmail("");
+          setAuthPassword("");
+
+        } catch (error) {
+          console.error("Login error:", error);
+          setAuthError(error.message);
+        }
+      } else {
+        setAuthError("Please enter email and password for login.");
       }
     }
   };
