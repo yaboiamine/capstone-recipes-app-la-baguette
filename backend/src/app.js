@@ -22,3 +22,4 @@ app.use("/auth", authRouter); // <-- And this line
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
