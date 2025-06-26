@@ -16,11 +16,20 @@ module.exports = (sequelize, DataTypes) => {
     {
       firstName: DataTypes.STRING,
       lastName: DataTypes.STRING,
-      email: DataTypes.STRING,
+       email: {
+        type: DataTypes.STRING,
+        allowNull: false, // Email should generally be required
+        unique: true,     // Email should be unique
+      },
+      password: { // <--- THIS IS THE MISSING PART!
+        type: DataTypes.STRING,
+        allowNull: false, // As per your database constraint
+      },
     },
     {
       sequelize,
       modelName: "User",
+       tableName: "Users", // Explicitly define tableName to avoid potential pluralization issues, though 'Users' is default
     }
   );
   return User;

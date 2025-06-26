@@ -18,6 +18,10 @@ module.exports = {
       email: {
         type: Sequelize.STRING
       },
+      password: { // <--- ADDED THIS COLUMNAdd commentMore actions
+        type: Sequelize.STRING,
+        allowNull: false // Passwords should be non-nullable after hashing
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

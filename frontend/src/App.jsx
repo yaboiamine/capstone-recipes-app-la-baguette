@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "./App.css"; // Import the CSS file
+import "./App.css";
 
 function App() {
   // Auth state
@@ -10,6 +10,7 @@ function App() {
   const [authLastName, setAuthLastName] = useState("");
   const [user, setUser] = useState(null);
   const [authError, setAuthError] = useState("");
+  const [token, setToken] = useState(null); // Removed localStorage reference
 
   // User state
   const [users, setUsers] = useState([]);
@@ -23,123 +24,196 @@ function App() {
   const [description, setDescription] = useState("");
   const [showAddRecipe, setShowAddRecipe] = useState(false);
   const [showAddUser, setShowAddUser] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // Mock data for demonstration
+  // API base URL
+  const API_BASE = "http://localhost:3001";
+
+  // Load data when user is logged in
   useEffect(() => {
-    if (!user) return;
+    if (user && token) {
+      loadRecipes();
+      loadUsers();
+    }
+  }, [user, token]);
 
-    // Mock recipes
-    setRecipes([
-      {
-        id: 1,
-        title: "Classic French Croissant",
-        description:
-          "Buttery, flaky pastry perfect for breakfast. Made with layers of butter and dough, this traditional French pastry takes time but is worth every minute.",
-        author: "Marie Dubois",
-        date: "2 days ago",
-        likes: 124,
-        category: "Pastry",
+  // API helper function
+  const apiCall = async (endpoint, options = {}) => {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` })
       },
-      {
-        id: 2,
-        title: "Avocado Toast Supreme",
-        description:
-          "Fresh avocado on artisan bread with herbs and spices. A healthy and delicious way to start your day with premium ingredients.",
-        image:
-          "https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?w=400&h=300&fit=crop",
-        author: "Jean Laurent",
-        date: "1 week ago",
-        likes: 89,
-        category: "Breakfast",
-      },
-      {
-        id: 3,
-        title: "Mediterranean Pasta",
-        description:
-          "Fresh pasta with tomatoes, olives, and herbs. A taste of the Mediterranean coast brought to your kitchen with authentic flavors.",
-        image:
-          "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?w=400&h=300&fit=crop",
-        author: "Sophie Martin",
-        date: "3 days ago",
-        likes: 156,
-        category: "Main Course",
-      },
-    ]);
-  }, [user]);
+      ...options
+    };
+
+    const response = await fetch(`${API_BASE}${endpoint}`, config);
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    return response.json();
+  };
+
+  // Load recipes from backend
+  const loadRecipes = async () => {
+    try {
+      setLoading(true);
+      const data = await apiCall('/recipes');
+      setRecipes(data);
+    } catch (error) {
+      console.error('Error loading recipes:', error);
+      // Fallback to mock data if backend fails
+      setRecipes([
+        {
+          id: 1,
+          title: "Classic French Croissant",
+          description: "Buttery, flaky pastry perfect for breakfast. Made with layers of butter and dough.",
+          createdAt: new Date().toISOString(),
+        }
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load users from backend
+  const loadUsers = async () => {
+    try {
+      const data = await apiCall('/users');
+      setUsers(data);
+    } catch (error) {
+      console.error('Error loading users:', error);
+    }
+  };
 
   // Auth handlers
   const handleAuth = async () => {
     setAuthError("");
+    setLoading(true);
 
-    if (authMode === "login") {
-      if (authEmail && authPassword) {
-        setUser({
-          id: 1,
-          firstName: authFirstName || "Chef",
-          lastName: authLastName || "User",
-          email: authEmail,
+    try {
+      if (authMode === "signup") {
+        if (!authEmail || !authPassword || !authFirstName || !authLastName) {
+          throw new Error("Please fill all fields for signup.");
+        }
+
+        const result = await apiCall('/auth/signup', {
+          method: 'POST',
+          body: JSON.stringify({
+            firstName: authFirstName,
+            lastName: authLastName,
+            email: authEmail,
+            password: authPassword,
+          })
         });
-        setAuthEmail("");
-        setAuthPassword("");
-      } else {
-        setAuthError("Please enter email and password");
-      }
-    } else {
-      if (authEmail && authPassword && authFirstName && authLastName) {
-        setUser({
-          id: 1,
-          firstName: authFirstName,
-          lastName: authLastName,
-          email: authEmail,
-        });
+
+        // Store token and user data in state only
+        setToken(result.token);
+        setUser(result.user);
+
+        // Clear form
         setAuthEmail("");
         setAuthPassword("");
         setAuthFirstName("");
         setAuthLastName("");
+
       } else {
-        setAuthError("Please fill all fields");
+        // Login
+        if (!authEmail || !authPassword) {
+          throw new Error("Please enter email and password for login.");
+        }
+
+        const result = await apiCall('/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: authEmail,
+            password: authPassword,
+          })
+        });
+
+        // Store token and user data in state only
+        setToken(result.token);
+        setUser(result.user);
+
+        // Clear form
+        setAuthEmail("");
+        setAuthPassword("");
       }
+    } catch (error) {
+      console.error('Auth error:', error);
+      setAuthError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleLogout = () => {
+    setToken(null);
     setUser(null);
     setRecipes([]);
     setUsers([]);
   };
 
-  // Add recipe
+  // Add recipe to backend
   const handleRecipeSubmit = async () => {
-    const newRecipe = {
-      id: recipes.length + 1,
-      title,
-      description,
-      image:
-        "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&h=300&fit=crop",
-      author: `${user.firstName} ${user.lastName}`,
-      date: "just now",
-      likes: 0,
-      category: "New Recipe",
-    };
-    setRecipes([newRecipe, ...recipes]);
-    setTitle("");
-    setDescription("");
-    setShowAddRecipe(false);
+    if (!title || !description) {
+      alert("Please fill in both title and description");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const newRecipe = await apiCall('/recipes', {
+        method: 'POST',
+        body: JSON.stringify({ title, description })
+      });
+
+      // Add to local state
+      setRecipes([newRecipe, ...recipes]);
+      setTitle("");
+      setDescription("");
+      setShowAddRecipe(false);
+    } catch (error) {
+      console.error('Error adding recipe:', error);
+      alert('Failed to add recipe: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Add user
+  // Add user to backend
   const handleUserSubmit = async () => {
-    const newUser = {
-      id: users.length + 1,
-      firstName,
-      lastName,
-      email,
-    };
-    setUsers([...users, newUser]);
-    setFirstName("");
-    setLastName("");
-    setEmail("");
-    setShowAddUser(false);
+    if (!firstName || !lastName || !email) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const newUser = await apiCall('/users', {
+        method: 'POST',
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          password: 'defaultPassword123' // You might want to handle this differently
+        })
+      });
+
+      setUsers([...users, newUser]);
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setShowAddUser(false);
+    } catch (error) {
+      console.error('Error adding user:', error);
+      alert('Failed to add user: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!user) {
@@ -167,6 +241,7 @@ function App() {
                     onChange={(e) => setAuthFirstName(e.target.value)}
                     className="input"
                     required
+                    disabled={loading}
                   />
                   <input
                     type="text"
@@ -175,6 +250,7 @@ function App() {
                     onChange={(e) => setAuthLastName(e.target.value)}
                     className="input"
                     required
+                    disabled={loading}
                   />
                 </div>
               )}
@@ -187,6 +263,7 @@ function App() {
                   onChange={(e) => setAuthEmail(e.target.value)}
                   className="input"
                   required
+                  disabled={loading}
                 />
               </div>
 
@@ -198,20 +275,27 @@ function App() {
                   onChange={(e) => setAuthPassword(e.target.value)}
                   className="input"
                   required
+                  disabled={loading}
                 />
               </div>
 
-              <button onClick={handleAuth} className="button">
-                {authMode === "signup" ? "Create Account" : "Sign In"}
+              <button 
+                onClick={handleAuth} 
+                className="button"
+                disabled={loading}
+              >
+                {loading ? 'Loading...' : (authMode === "signup" ? "Create Account" : "Sign In")}
               </button>
             </div>
 
             <div className="text-center">
               <button
-                onClick={() =>
-                  setAuthMode(authMode === "signup" ? "login" : "signup")
-                }
+                onClick={() => {
+                  setAuthMode(authMode === "signup" ? "login" : "signup");
+                  setAuthError("");
+                }}
                 className="link-button"
+                disabled={loading}
               >
                 {authMode === "signup"
                   ? "Already have an account? Sign In"
@@ -258,6 +342,7 @@ function App() {
             <button
               onClick={() => setShowAddRecipe(true)}
               className="add-button"
+              disabled={loading}
             >
               <span>+</span>
               <span>Add Recipe</span>
@@ -279,6 +364,7 @@ function App() {
                     onChange={(e) => setTitle(e.target.value)}
                     className="input"
                     required
+                    disabled={loading}
                   />
                   <textarea
                     placeholder="Describe your recipe..."
@@ -287,18 +373,21 @@ function App() {
                     rows={4}
                     className="textarea"
                     required
+                    disabled={loading}
                   />
                   <div className="button-group">
                     <button
                       onClick={handleRecipeSubmit}
                       className="button"
                       style={{ width: "auto", padding: "0.5rem 1.5rem" }}
+                      disabled={loading}
                     >
-                      Share Recipe
+                      {loading ? 'Saving...' : 'Share Recipe'}
                     </button>
                     <button
                       onClick={() => setShowAddRecipe(false)}
                       className="secondary-button"
+                      disabled={loading}
                     >
                       Cancel
                     </button>
@@ -310,73 +399,56 @@ function App() {
 
           {/* Recipe Cards */}
           <div>
-            {recipes.map((recipe) => (
-              <div key={recipe.id} className="card">
-                {/* Card Header */}
-                <div className="recipe-header">
-                  <div className="avatar">
-                    {recipe.author
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
+            {loading && recipes.length === 0 ? (
+              <div className="text-center">Loading recipes...</div>
+            ) : (
+              recipes.map((recipe) => (
+                <div key={recipe.id} className="card">
+                  {/* Card Header */}
+                  <div className="recipe-header">
+                    <div className="avatar">
+                      {user.firstName[0]}{user.lastName[0]}
+                    </div>
+                    <div>
+                      <h3
+                        className="title"
+                        style={{ fontSize: "1rem", marginBottom: "0.25rem" }}
+                      >
+                        {recipe.title}
+                      </h3>
+                      <div className="flex gap-sm text-sm text-gray">
+                        <span>{user.firstName} {user.lastName}</span>
+                        <span>•</span>
+                        <span>{new Date(recipe.createdAt || Date.now()).toLocaleDateString()}</span>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h3
-                      className="title"
-                      style={{ fontSize: "1rem", marginBottom: "0.25rem" }}
-                    >
-                      {recipe.title}
-                    </h3>
-                    <div className="flex gap-sm text-sm text-gray">
-                      <span>{recipe.author}</span>
-                      <span>•</span>
-                      <span>{recipe.date}</span>
+
+                  {/* Recipe Content */}
+                  <div className="card-content">
+                    <p style={{ color: "#374151", marginBottom: "1rem", lineHeight: "1.5" }}>
+                      {recipe.description}
+                    </p>
+
+                    {/* Actions */}
+                    <div className="recipe-actions">
+                      <div className="flex gap-lg">
+                        <button className="action-button text-red">
+                          <span>❤️</span>
+                          <span>0</span>
+                        </button>
+                        <button className="action-button">
+                          <span>📅</span>
+                        </button>
+                      </div>
+                      <span className="text-sm" style={{ color: "#9ca3af" }}>
+                        Recipe from database
+                      </span>
                     </div>
                   </div>
                 </div>
-
-                {/* Recipe Image */}
-                {recipe.image && (
-                  <div className="image-container">
-                    <img
-                      src={recipe.image}
-                      alt={recipe.title}
-                      className="recipe-image"
-                    />
-                    <div className="category">{recipe.category}</div>
-                  </div>
-                )}
-
-                {/* Recipe Content */}
-                <div className="card-content">
-                  <p
-                    style={{
-                      color: "#374151",
-                      marginBottom: "1rem",
-                      lineHeight: "1.5",
-                    }}
-                  >
-                    {recipe.description}
-                  </p>
-
-                  {/* Actions */}
-                  <div className="recipe-actions">
-                    <div className="flex gap-lg">
-                      <button className="action-button text-red">
-                        <span>❤️</span>
-                        <span>{recipe.likes}</span>
-                      </button>
-                      <button className="action-button">
-                        <span>📅</span>
-                      </button>
-                    </div>
-                    <span className="text-sm" style={{ color: "#9ca3af" }}>
-                      {recipe.likes} people liked this recipe
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 
@@ -393,6 +465,7 @@ function App() {
                   onClick={() => setShowAddUser(true)}
                   className="action-button text-orange"
                   style={{ fontSize: "1.25rem" }}
+                  disabled={loading}
                 >
                   +
                 </button>
@@ -409,6 +482,7 @@ function App() {
                       onChange={(e) => setFirstName(e.target.value)}
                       className="input text-sm"
                       required
+                      disabled={loading}
                     />
                     <input
                       type="text"
@@ -417,6 +491,7 @@ function App() {
                       onChange={(e) => setLastName(e.target.value)}
                       className="input text-sm"
                       required
+                      disabled={loading}
                     />
                     <input
                       type="email"
@@ -425,19 +500,22 @@ function App() {
                       onChange={(e) => setEmail(e.target.value)}
                       className="input text-sm"
                       required
+                      disabled={loading}
                     />
                     <div className="flex gap-sm">
                       <button
                         onClick={handleUserSubmit}
                         className="button text-sm"
                         style={{ width: "auto", padding: "0.25rem 0.75rem" }}
+                        disabled={loading}
                       >
-                        Add
+                        {loading ? 'Adding...' : 'Add'}
                       </button>
                       <button
                         onClick={() => setShowAddUser(false)}
                         className="secondary-button"
                         style={{ padding: "0.25rem 0.75rem" }}
+                        disabled={loading}
                       >
                         Cancel
                       </button>
@@ -477,13 +555,11 @@ function App() {
                 </div>
                 <div className="stat-item">
                   <span className="text-gray">Active Members</span>
-                  <span className="stat-value">{users.length}</span>
+                  <span className="stat-value">{users.length + 1}</span>
                 </div>
                 <div className="stat-item">
                   <span className="text-gray">Total Likes</span>
-                  <span className="stat-value">
-                    {recipes.reduce((sum, recipe) => sum + recipe.likes, 0)}
-                  </span>
+                  <span className="stat-value">0</span>
                 </div>
               </div>
             </div>
