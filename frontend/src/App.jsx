@@ -25,6 +25,7 @@ function App() {
   const [showAddRecipe, setShowAddRecipe] = useState(false);
   const [showAddUser, setShowAddUser] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [deletingRecipeId, setDeletingRecipeId] = useState(null);
 
   // API base URL
   const API_BASE = "http://localhost:3001";
@@ -181,6 +182,28 @@ function App() {
       alert('Failed to add recipe: ' + error.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Delete recipe from backend
+  const handleRecipeDelete = async (recipeId) => {
+    if (!window.confirm("Are you sure you want to delete this recipe?")) {
+      return;
+    }
+
+    try {
+      setDeletingRecipeId(recipeId);
+      await apiCall(`/recipes/${recipeId}`, {
+        method: 'DELETE'
+      });
+
+      // Remove from local state
+      setRecipes(recipes.filter(recipe => recipe.id !== recipeId));
+    } catch (error) {
+      console.error('Error deleting recipe:', error);
+      alert('Failed to delete recipe: ' + error.message);
+    } finally {
+      setDeletingRecipeId(null);
     }
   };
 
@@ -409,7 +432,7 @@ function App() {
                     <div className="avatar">
                       {user.firstName[0]}{user.lastName[0]}
                     </div>
-                    <div>
+                    <div style={{ flex: 1 }}>
                       <h3
                         className="title"
                         style={{ fontSize: "1rem", marginBottom: "0.25rem" }}
@@ -422,6 +445,19 @@ function App() {
                         <span>{new Date(recipe.createdAt || Date.now()).toLocaleDateString()}</span>
                       </div>
                     </div>
+                    <button
+                      onClick={() => handleRecipeDelete(recipe.id)}
+                      className="action-button"
+                      style={{ color: "#ef4444" }}
+                      disabled={deletingRecipeId === recipe.id}
+                      title="Delete recipe"
+                    >
+                      {deletingRecipeId === recipe.id ? (
+                        <span>⏳</span>
+                      ) : (
+                        <span>🗑️</span>
+                      )}
+                    </button>
                   </div>
 
                   {/* Recipe Content */}
